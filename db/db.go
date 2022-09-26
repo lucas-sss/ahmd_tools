@@ -1,6 +1,7 @@
 package db
 
 import (
+	"ahmd_tools/config"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -10,13 +11,13 @@ import (
 var ahmdDB *gorm.DB
 var proxyServerDB *gorm.DB
 
-func Init() {
-	ahmdDbInit()
-	proxyServerDbInit()
+func Init(mysqlConf config.Mysql) {
+	ahmdDbInit(mysqlConf)
+	proxyServerDbInit(mysqlConf)
 }
 
-func ahmdDbInit() {
-	dsn := "root:king@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
+func ahmdDbInit(mysqlConf config.Mysql) {
+	dsn := mysqlConf.Username + ":" + mysqlConf.Password + "@tcp(" + mysqlConf.Host + ")/test?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("open ahmd db fail")
@@ -32,8 +33,8 @@ func ahmdDbInit() {
 
 }
 
-func proxyServerDbInit() {
-	dsn := "root:king@tcp(127.0.0.1:3306)/proxy_server?charset=utf8mb4&parseTime=True&loc=Local"
+func proxyServerDbInit(mysqlConf config.Mysql) {
+	dsn := mysqlConf.Username + ":" + mysqlConf.Password + "@tcp(" + mysqlConf.Host + ")/proxy_server?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("open proxy server db fail")

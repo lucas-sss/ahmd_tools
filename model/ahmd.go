@@ -20,3 +20,13 @@ type ThridObject struct {
 func (ThridObject) TableName() string {
 	return "t_objectlist"
 }
+
+type DingDingToken struct {
+	TokenId    string   `json:"tokenid" gorm:"column:tokenid;type:varchar(100) NOT NULL;primaryKey"`
+	TokenValue string   `json:"tokenvalue" gorm:"column:tokenvalue;type:varchar(200) DEFAULT NULL"`
+	CreateDate JsonTime `json:"createdate" gorm:"column:createdate;type:datetime DEFAULT NULL"`
+}
+
+func (DingDingToken) TableName() string {
+	return "t_dingding_token"
+}

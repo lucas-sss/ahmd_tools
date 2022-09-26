@@ -152,17 +152,20 @@
                             $.messager.alert('错误', jsonData.errmsg, 'error');
                             return
                         } else {
-                            // $.messager.show({
-                            //     title: '结果',
-                            //     msg: '密钥盒子运行状态正常.',
-                            //     timeout: 2000,
-                            //     showType: 'fade',
-                            //     style: {
-                            //         right: '',
-                            //         bottom: ''
-                            //     }
-                            // });
-                            $.messager.alert('提示', '密钥盒子运行状态正常', 'info');
+                            var state = eval(jsonData.data).state
+                            if (state == 1) {
+                                $.messager.alert('提示', '密钥盒子运行状态: 正常', 'info');
+                            } else if (state == 2) {
+                                $.messager.alert('提示', '密钥盒子运行状态: 异常', 'info');
+                            }else if (state == 3) {
+                                $.messager.alert('提示', '密钥盒子运行状态: 断开', 'info');
+                            }else if (state == 4) {
+                                $.messager.alert('提示', '密钥盒子运行状态: 未激活', 'info');
+                            }else if (state == 5) {
+                                $.messager.alert('提示', '密钥盒子运行状态: 未发现设备', 'info');
+                            }else{
+                                $.messager.alert('提示', '密钥盒子运行状态: 状态码识别错误', 'info');
+                            }
                         }
                     }
                 });
@@ -195,7 +198,8 @@
                         data: "thridobjectid=" + row["thridobjectid"],
                         async: true, //异步   
                         error: function () {
-                            alert('error');
+                            $.messager.progress('close');
+                            $.messager.alert('错误', "请求异常", 'error');
                         },
                         success: function (jsonData) {
                             $.messager.progress('close');

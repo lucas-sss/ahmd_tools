@@ -35,11 +35,20 @@ func RegisterBusinessRoute(r *gin.Engine) {
 	})
 
 	r.POST("/business/thridobject/pushkeyupdate", func(c *gin.Context) {
-		time.Sleep(time.Duration(2) * time.Second)
 		thridobjectid := c.PostForm("thridobjectid")
 		fmt.Printf("企业ID: %s\n", thridobjectid)
 		if thridobjectid == "" {
 			c.JSON(http.StatusOK, apiresp.Fail(-1, "企业ID为空"))
+			return
+		}
+
+		dingtalkApiResp, err := PushKeyUpdateNotice(thridobjectid)
+		if err != nil {
+			c.JSON(http.StatusOK, apiresp.Fail(-1, "请求异常异常"))
+			return
+		}
+		if dingtalkApiResp.ErrCode != 0 {
+			c.JSON(http.StatusOK, apiresp.Fail(-1, "推送密钥更新请求失败："+dingtalkApiResp.ErrorMsg))
 			return
 		}
 		c.JSON(http.StatusOK, apiresp.Success(nil))
@@ -63,6 +72,6 @@ func RegisterBusinessRoute(r *gin.Engine) {
 			c.JSON(http.StatusOK, apiresp.Fail(-1, "查询盒子状态失败"))
 			return
 		}
-		c.JSON(http.StatusOK, apiresp.Success(map[string]string{"state": boxStatusResp.State}))
+		c.JSON(http.StatusOK, apiresp.Success(map[string]int{"state": boxStatusResp.State}))
 	})
 }

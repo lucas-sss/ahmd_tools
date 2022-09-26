@@ -10,8 +10,7 @@ func RegistPageRoute(r *gin.Engine) {
 
 	r.GET("/", func(c *gin.Context) {
 		// 指定重定向的URL
-		c.Request.URL.Path = "/html/login"
-		r.HandleContext(c)
+		c.Redirect(http.StatusFound, "/html/login")
 	})
 
 	r.GET("/html/login", func(c *gin.Context) {
