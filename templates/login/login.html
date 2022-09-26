@@ -1,0 +1,73 @@
+{{ define "login/login.html" }}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>安恒密盾企业工具-登录</title>
+    <link rel="stylesheet" type="text/css" href="/static/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/static/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/static/demo.css">
+    <script type="text/javascript" src="/static/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/static/easyui.valid.new.js"></script>
+    <style>
+        body {
+            text-align: center
+        }
+    </style>
+</head>
+<body style="text-align: center">
+<h1 style="margin-top:10%; text-align: center; font-size: xx-large">安恒密盾企业工具</h1>
+<div style="margin:30px 0;"></div>
+<div class="">
+    <div style="text-align: center">
+        <form id="ff" method="post" action="/user/login">
+            <div style="margin-bottom:20px; margin-top: 15px;text-align: center">
+                <input class="easyui-textbox" name="username" style="width:300px"
+                       data-options="label:'用户名:',iconCls:'icon-man',required:true">
+            </div>
+            <div style="margin-bottom:20px; text-align: center">
+                <input class="easyui-textbox" type="password" name="password" style="width:300px;"
+                       data-options="validType:'checkNumAndChar',label:'密&nbsp&nbsp码:',iconCls:'icon-lock',
+                       required:true">
+            </div>
+        </form>
+    </div>
+
+    <div style="text-align:center;padding:5px;">
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearForm()" style="width:65px">取消</a>
+        <a id="loginBtn" href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()"
+           style="width:65px; background: #00bbee">登录</a>
+    </div>
+</div>
+<script>
+    function submitForm() {
+        $('#loginBtn').css("background-color", "gray");
+        $('#loginBtn').attr("disabled", "true");
+        $('#ff').form({
+            url: "/api/auth/login",
+            onSubmit: function () {
+                return $(this).form('enableValidation').form('validate');
+            },
+            success: function (data) {
+                $('#loginBtn').css("background-color", "cornflowerblue");
+                $('#loginBtn').removeAttr("disabled");
+                var resp = $.parseJSON(data);
+                if (resp.errcode === 0) {
+                    window.location = "/html/index"
+                } else {
+                    // alert(resp.errmsg);
+                    $.messager.alert('登录失败', resp.errmsg, 'warning');
+                }
+            }
+        });
+        $('#ff').submit();
+    }
+
+    function clearForm() {
+        $('#ff').form('clear');
+    }
+</script>
+</body>
+</html>
+{{end}}

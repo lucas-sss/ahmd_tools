@@ -1,0 +1,223 @@
+{{ define "index/index.html" }}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>安恒密盾企业工具</title>
+    <link rel="stylesheet" type="text/css" href="/static/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/static/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/static/demo.css">
+    <script type="text/javascript" src="/static/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/static/easyui.valid.new.js"></script>
+    <style>
+        .datagrid {
+            margin: 20px auto;
+        }
+
+        body {
+            text-align: center
+        }
+    </style>
+</head>
+
+<body style="text-align: center">
+    <h1 style="margin-top:2%; text-align: center; font-size: xx-large">安恒密盾企业工具</h1>
+    <div style="margin:30px 0;"></div>
+    <div class="">
+        <div style="text-align: center">
+            <div style="margin-bottom:20px; margin-top: 15px;text-align: center">
+                <input class="easyui-textbox" id="objectname" style="width:450px"
+                    data-options="label:'企业名称:',required:false">
+                <a id="searchBtn" href="javascript:void(0)" class="easyui-linkbutton" onclick="searchObject()"
+                    style="width:65px; margin-left: 20px;background: #00bbee">查询</a>
+            </div>
+        </div>
+        <div style="text-align: center;">
+            <div style="margin-top: 50px;text-align: center">
+                <a id="boxStatusBtn" href="javascript:void(0)" class="easyui-linkbutton" onclick="searchBoxStatus()"
+                    style="width:110px; margin-left: 20px;background: #5267efa2">查询盒子状态</a>
+                <a id="keyUpdateNoticeBtn" href="javascript:void(0)" class="easyui-linkbutton"
+                    onclick="pushKeyUpdateNotice()"
+                    style="width:140px; margin-left: 20px;background: #5267efa2">推送密钥更新通知</a>
+            </div>
+        </div>
+        <div style="text-align:center;padding:5px;">
+            <table id="objecttable" class="easyui-datagrid" style="width:1010px;" toolbar="#tb"
+                data-options="singleSelect:true,checkOnSelect:true,selectOnCheck:true">
+                <thead>
+                    <tr>
+                        <th field="ck" checkbox="true"></th>
+                        <th field="objectname" width="300" align="center">企业名称</th>
+                        <th field="thridobjectid" width="320" align="center">企业ID</th>
+                        <th field="createdate" width="180" align="center">创建时间</th>
+                        <th field="objectstatus" width="80" align="center" formatter=formatObjectStatus>服务状态</th>
+                        <th field="objectprivate" width="100" align="center" formatter="formatPrivateStatus">私有化状态</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            $.messager.defaults.ok = "确定"
+            $.messager.defaults.cancel = "取消"
+        })
+        function searchObject() {
+            //TODO 检查企业名称参数是否为空
+            var objectname = $('#objectname').val()
+            var name = objectname.replace(/(^\s*)|(\s*$)/g, '');//去除空格;
+            if (name == '' || name == undefined || name == null) {
+                $.messager.alert('警告', '查询条件为空!', 'warning');
+                return
+            }
+            /*正在加载*/
+            $.messager.progress({
+                title: '提示',
+                msg: '请求处理中，请稍候...',
+                text: ''
+            });
+            var url = '/business/thridobject/search?name=' + encodeURI(name)
+            $.ajax({
+                url: url,
+                type: 'get',
+                async: true, //异步   
+                error: function () {
+                    alert("error")
+                },
+                success: function (jsonData) {
+                    $.messager.progress('close');
+                    if (jsonData.errcode != 0) {
+                        $.messager.alert('错误', jsonData.errmsg, 'error');
+                        return
+                    } else {
+                        var size = eval(jsonData.data).length
+                        if (size == 0) {
+                            $.messager.alert('警告', '未搜索到相关企业，请确认查询条件!', 'warning');
+                            return
+                        }
+                        $('#objecttable').datagrid('loadData', { 'total': eval(jsonData.data).length, rows: jsonData.data });
+                    }
+                }
+            });
+        }
+
+        function formatObjectStatus(val, row) {
+            if (val == 1) {
+                return '<span style="color:green;">正常</span>';
+            } else {
+                return '<span style="font-weight:bolder;color:red;">已停用</span>';
+            }
+        }
+        function formatPrivateStatus(val, row) {
+            if (val == 0) {
+                return '公有云';
+            } else if (val == 1) {
+                return '<span style="font-weight:bolder;color:blue;">私有化</span>';
+            } else {
+                return '<span style="font-weight:bolder;color:purple;">小盒子</span>';
+            }
+        }
+
+        function searchBoxStatus() {
+            var row = $('#objecttable').datagrid('getSelected');//获取选中那一行的数据
+            if (row) {
+                if (row["objectstatus"] != 1) {
+                    $.messager.alert('警告', "该企业安恒密盾服务已停用！请选择服务状态为正常的企业。", 'warning');
+                    return false
+                }
+                if (row["objectprivate"] != 2) {
+                    $.messager.alert('警告', "该企业不是小盒子用户！请选择私有化状态为小盒子的企业。", 'warning');
+                    return false
+                }
+                /*正在加载*/
+                $.messager.progress({
+                    title: '提示',
+                    msg: '请求处理中，请稍候...',
+                    text: ''
+                });
+                $.ajax({
+                    url: "/business/thridobject/boxstatus",
+                    type: 'post',
+                    data: "thridobjectid=" + row["thridobjectid"],
+                    async: true, //异步   
+                    error: function () {
+                        alert('error');
+                    },
+                    success: function (jsonData) {
+                        $.messager.progress('close');
+
+                        if (jsonData.errcode != 0) {
+                            $.messager.alert('错误', jsonData.errmsg, 'error');
+                            return
+                        } else {
+                            // $.messager.show({
+                            //     title: '结果',
+                            //     msg: '密钥盒子运行状态正常.',
+                            //     timeout: 2000,
+                            //     showType: 'fade',
+                            //     style: {
+                            //         right: '',
+                            //         bottom: ''
+                            //     }
+                            // });
+                            $.messager.alert('提示', '密钥盒子运行状态正常', 'info');
+                        }
+                    }
+                });
+            } else {
+                $.messager.alert('警告', '请选择企业!', 'warning');
+                return
+            }
+        }
+        function pushKeyUpdateNotice() {
+            var row = $('#objecttable').datagrid('getSelected');//获取选中那一行的数据
+            if (row) {
+                var msg = "确认向企业[" + row["objectname"] + "]推送密钥更新通知？"
+                $.messager.confirm("确认", msg, function (r) {
+                    if (!r) {
+                        return false;
+                    }
+                    if (row["objectstatus"] != 1) {
+                        $.messager.alert('警告', "该企业安恒密盾服务已停用！", 'warning');
+                        return false
+                    }
+                    /*正在加载*/
+                    $.messager.progress({
+                        title: '提示',
+                        msg: '请求处理中，请稍候...',
+                        text: ''
+                    });
+                    $.ajax({
+                        url: "/business/thridobject/pushkeyupdate",
+                        type: 'post',
+                        data: "thridobjectid=" + row["thridobjectid"],
+                        async: true, //异步   
+                        error: function () {
+                            alert('error');
+                        },
+                        success: function (jsonData) {
+                            $.messager.progress('close');
+                            if (jsonData.errcode != 0) {
+                                $.messager.alert('错误', jsonData.errmsg, 'error');
+                                return
+                            } else {
+                                $.messager.alert('提示', ' 密钥更新通知推送成功', 'info');
+                            }
+                        }
+                    });
+                });
+            } else {
+                $.messager.alert('警告', '请选择企业!', 'warning');
+                return
+            }
+        }
+        function sleep(time) {
+            return new Promise((resolve) => setTimeout(resolve, time));
+        }
+    </script>
+</body>
+
+</html>
+{{end}}
