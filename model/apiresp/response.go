@@ -1,4 +1,4 @@
-package response
+package apiresp
 
 import "time"
 
@@ -14,6 +14,15 @@ func Success(value interface{}) ApiResp {
 		ErrCode:   0,
 		ErrMsg:    "success",
 		Data:      value,
+		Timestamp: time.Now().Format("2006-01-02 15:04:05"),
+	}
+}
+
+func SuccessWithKV(k, v string) ApiResp {
+	return ApiResp{
+		ErrCode:   0,
+		ErrMsg:    "success",
+		Data:      map[string]string{k: v},
 		Timestamp: time.Now().Format("2006-01-02 15:04:05"),
 	}
 }
