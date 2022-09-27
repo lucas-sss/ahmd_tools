@@ -20,9 +20,23 @@
             text-align: center
         }
     </style>
+    <script type="text/javascript">
+        if(sessionStorage.getItem("browser_logout") != "ok"){
+            //退出登录
+            $.get("/business/auth/logout", function(){});
+            window.location = "/html/login"
+        }
+    </script>
 </head>
 
-<body style="text-align: center">
+<body style="text-align: center" onload="init()">
+    <div data-options="region:'north'" style="height:50px">
+        <div style="text-align: right; margin-right: 0; margin-top: 5px">
+            <label id="ipId" style="padding-right: 10px">IP: --</label>
+            <label id="userId" style="padding-right: 10px">用户: --</label>
+            <a href="javascript:void(0)" id="logout" onclick="outLogin()">退出登录</a>
+        </div>
+    </div>
     <h1 style="margin-top:2%; text-align: center; font-size: xx-large">安恒密盾企业工具</h1>
     <div style="margin:30px 0;"></div>
     <div class="">
@@ -64,6 +78,37 @@
             $.messager.defaults.ok = "确定"
             $.messager.defaults.cancel = "取消"
         })
+
+        function init() {
+            $.ajax({
+                url: "/business/auth/info",
+                type: 'get',
+                async: true, //异步   
+                error: function () {
+
+                },
+                success: function (jsonData) {
+                    if (jsonData.errcode == 0) {
+                        $('#userId').text("用户: " + jsonData.data.username)
+                        $('#ipId').text("IP: " + jsonData.data.remoteIp)
+                    }
+                }
+            });
+        }
+
+        function outLogin() {
+            $.ajax({
+                url: "/business/auth/logout",
+                type: 'get',
+                async: false, //异步   
+                error: function () {
+                },
+                success: function (jsonData) {
+                    window.location = "/html/login"
+                }
+            });
+        }
+
         function searchObject() {
             //TODO 检查企业名称参数是否为空
             var objectname = $('#objectname').val()
@@ -157,13 +202,13 @@
                                 $.messager.alert('提示', '密钥盒子运行状态: 正常', 'info');
                             } else if (state == 2) {
                                 $.messager.alert('提示', '密钥盒子运行状态: 异常', 'info');
-                            }else if (state == 3) {
+                            } else if (state == 3) {
                                 $.messager.alert('提示', '密钥盒子运行状态: 断开', 'info');
-                            }else if (state == 4) {
+                            } else if (state == 4) {
                                 $.messager.alert('提示', '密钥盒子运行状态: 未激活', 'info');
-                            }else if (state == 5) {
+                            } else if (state == 5) {
                                 $.messager.alert('提示', '密钥盒子运行状态: 未发现设备', 'info');
-                            }else{
+                            } else {
                                 $.messager.alert('提示', '密钥盒子运行状态: 状态码识别错误', 'info');
                             }
                         }
@@ -219,6 +264,13 @@
         }
         function sleep(time) {
             return new Promise((resolve) => setTimeout(resolve, time));
+        }
+
+        function removeCookies(cookieList) {
+            let data = new Date(new Date().getTime() - 24 * 60 * 60 * 1000).toUTCString()
+            for (let i in cookieList) {
+                document.cookie = cookieList[i] + '= ;' + 'expires=' + data
+            }
         }
     </script>
 </body>

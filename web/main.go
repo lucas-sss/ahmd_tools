@@ -4,16 +4,25 @@ import (
 	"ahmd_tools/web/api"
 	"ahmd_tools/web/html"
 
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
 
 func Main() {
-	gin.SetMode(gin.ReleaseMode)
+	// gin.SetMode(gin.ReleaseMode)
+
 	// template目录下拥有前端用的一系列静态资源
 	// box := packr.NewBox("./template")
 
 	r := gin.Default()
 	// r.StaticFS("/static", box)
+
+	// 创建基于cookie的存储引擎，secret11111 参数是用于加密的密钥
+	store := cookie.NewStore([]byte("Hzflk@2022!"))
+	// 设置session中间件，参数mysession，指的是session的名字，也是cookie的名字
+	// store是前面创建的存储引擎，我们可以替换成其他存储引擎
+	r.Use(sessions.Sessions("ahmdsession", store))
 
 	r.LoadHTMLGlob("templates/**/*")
 	//指定某个目录为静态资源目录，可直接访问这个目录下的资源，url 要具体到资源名称

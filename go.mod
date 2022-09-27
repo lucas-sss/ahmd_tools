@@ -7,6 +7,7 @@ require github.com/gin-gonic/gin v1.8.1
 require (
 	github.com/BurntSushi/toml v1.2.0 // indirect
 	github.com/elazarl/go-bindata-assetfs v1.0.1 // indirect
+	github.com/gin-contrib/sessions v0.0.5 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/gobuffalo/envy v1.10.2 // indirect
 	github.com/gobuffalo/logger v1.0.7 // indirect
@@ -14,6 +15,9 @@ require (
 	github.com/gobuffalo/packr v1.30.1 // indirect
 	github.com/gobuffalo/packr/v2 v2.8.3 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/gorilla/context v1.1.1 // indirect
+	github.com/gorilla/securecookie v1.1.1 // indirect
+	github.com/gorilla/sessions v1.2.1 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect

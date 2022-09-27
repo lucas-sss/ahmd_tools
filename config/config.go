@@ -11,6 +11,7 @@ import (
 type AppConfig struct {
 	Mysql       Mysql
 	ProxyServer ProxyServer
+	Accounts    map[string]Account
 }
 
 type Mysql struct {
@@ -21,6 +22,11 @@ type Mysql struct {
 
 type ProxyServer struct {
 	Ip string
+}
+
+type Account struct {
+	User string
+	Pwd  string
 }
 
 var cfgPath *string = flag.String("c", "./conf.toml", "the file path of config for this service")
