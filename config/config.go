@@ -9,9 +9,14 @@ import (
 )
 
 type AppConfig struct {
+	Server      Server
 	Mysql       Mysql
 	ProxyServer ProxyServer
 	Accounts    map[string]Account
+}
+
+type Server struct {
+	Port int
 }
 
 type Mysql struct {
@@ -20,6 +25,7 @@ type Mysql struct {
 	Host     string
 }
 
+// 代理服务配置
 type ProxyServer struct {
 	Ip string
 }

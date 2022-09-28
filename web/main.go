@@ -1,22 +1,23 @@
 package web
 
 import (
+	"ahmd_tools/config"
 	"ahmd_tools/web/api"
 	"ahmd_tools/web/html"
+	"strconv"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
 
-func Main() {
-	// gin.SetMode(gin.ReleaseMode)
+func Main(server config.Server) {
+	if server.Port <= 0 || server.Port > 65535 {
+		panic("invalid server port: " + strconv.Itoa(server.Port))
+	}
 
-	// template目录下拥有前端用的一系列静态资源
-	// box := packr.NewBox("./template")
-
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
-	// r.StaticFS("/static", box)
 
 	// 创建基于cookie的存储引擎，secret11111 参数是用于加密的密钥
 	store := cookie.NewStore([]byte("Hzflk@2022!"))
@@ -35,5 +36,5 @@ func Main() {
 	api.RegisterBusinessRoute(r)
 	//注册页面路由
 	html.RegistPageRoute(r)
-	r.Run(":10602")
+	r.Run(":" + strconv.Itoa(server.Port))
 }

@@ -12,5 +12,5 @@ func main() {
 	//初始化数据库
 	db.Init(appConf.Mysql)
 	//启动web服务
-	web.Main()
+	web.Main(appConf.Server)
 }
