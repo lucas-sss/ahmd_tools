@@ -5,6 +5,8 @@
 "username" = "root"
 "password" = "king"
 "host" = "127.0.0.1:3306"
+"ahmddb" = "test"
+"proxydb" = "proxy_server"
 
 [proxyserver]
 "ip" = "10.1.202.250"

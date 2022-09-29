@@ -13,11 +13,11 @@ var proxyServerDB *gorm.DB
 
 func Init(mysqlConf config.Mysql) {
 	ahmdDbInit(mysqlConf)
-	proxyServerDbInit(mysqlConf)
+	// proxyServerDbInit(mysqlConf)
 }
 
 func ahmdDbInit(mysqlConf config.Mysql) {
-	dsn := mysqlConf.Username + ":" + mysqlConf.Password + "@tcp(" + mysqlConf.Host + ")/test?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := mysqlConf.Username + ":" + mysqlConf.Password + "@tcp(" + mysqlConf.Host + ")/" + mysqlConf.AhmdDB + "?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("open ahmd db fail")
@@ -34,7 +34,7 @@ func ahmdDbInit(mysqlConf config.Mysql) {
 }
 
 func proxyServerDbInit(mysqlConf config.Mysql) {
-	dsn := mysqlConf.Username + ":" + mysqlConf.Password + "@tcp(" + mysqlConf.Host + ")/proxy_server?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := mysqlConf.Username + ":" + mysqlConf.Password + "@tcp(" + mysqlConf.Host + ")/" + mysqlConf.ProxyDB + "?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("open proxy server db fail")

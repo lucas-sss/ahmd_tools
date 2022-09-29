@@ -18,7 +18,7 @@ func CheckBoxStatus(thridobjectid string) (*apiresp.BoxStatusResp, error) {
 	msgBody := fmt.Sprintf("{\"type\":\"BoxStatusReq\",\"corpId\":\"%s\",\"ackCheck\":false,\"cipher\":null,\"cipherType\":null,\"ukeyDamage\":false,\"macAddress\":null}", thridobjectid)
 	formParam := fmt.Sprintf("msgType=BoxStatusReq&corpId=%s&msgBody=%s", thridobjectid, msgBody)
 
-	fmt.Printf("form param: %s\n", formParam)
+	fmt.Printf("proxy server request form param: %s\n", formParam)
 	payload := strings.NewReader(formParam)
 	client := &http.Client{Timeout: 5 * time.Second}
 	response, err := client.Post(url, "application/x-www-form-urlencoded", payload)
@@ -33,6 +33,7 @@ func CheckBoxStatus(thridobjectid string) (*apiresp.BoxStatusResp, error) {
 		fmt.Printf("read response fail!, err: %s\n", err.Error())
 		return nil, err
 	}
+	fmt.Printf("proxy server  response: %s\n", string(result))
 
 	boxStatusResp := &apiresp.BoxStatusResp{}
 	err = json.Unmarshal(result, boxStatusResp)

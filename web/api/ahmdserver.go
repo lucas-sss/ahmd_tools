@@ -29,8 +29,8 @@ func PushKeyUpdateNotice(thridobjectid string) (*apiresp.DingtalkApiResp, error)
 
 	url := "https://oapi.dingtalk.com/push/to_org_emp?suite_access_token=" + dingToken.TokenValue
 
-	msgBody := fmt.Sprintf("{\"uuid\":\"%s\",\"auth_corpid\":\"%s\",\"appid\":\"1289\",\"data\":\"{\"type\":\"keyupdate\"}\"}", uid, thridobjectid)
-	fmt.Printf("json body: %s\n", msgBody)
+	msgBody := fmt.Sprintf("{\"uuid\":\"%s\",\"auth_corpid\":\"%s\",\"appid\":\"1289\",\"data\":\"{'type':'keyupdate'}\"}", uid, thridobjectid)
+	fmt.Printf("dingtalk request json body: %s\n", msgBody)
 
 	client := &http.Client{Timeout: 5 * time.Second}
 	resp, err := client.Post(url, "application/json", bytes.NewBuffer([]byte(msgBody)))

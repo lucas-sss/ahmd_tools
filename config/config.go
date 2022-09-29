@@ -23,6 +23,8 @@ type Mysql struct {
 	Username string
 	Password string
 	Host     string
+	ProxyDB  string
+	AhmdDB   string
 }
 
 // 代理服务配置

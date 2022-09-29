@@ -34,10 +34,10 @@ func authorize() gin.HandlerFunc {
 		if err != nil {
 			success = false
 		} else {
-			fmt.Printf("cookie token: %s\n", cookie)
+			// fmt.Printf("cookie token: %s\n", cookie)
 			session := sessions.Default(c)
 			token := session.Get("token")
-			fmt.Printf("session token: %s\n", token)
+			// fmt.Printf("session token: %s\n", token)
 			if token != cookie {
 				success = false
 			}
@@ -128,15 +128,25 @@ func RegisterBusinessRoute(r *gin.Engine) {
 	// /business/thridobject/search?name=弗兰科
 	r.GET("/business/thridobject/search", func(c *gin.Context) {
 		name := c.Query("name")
+
+		amount, err := db.SearchObjectAmountByName(name)
+		if err != nil {
+			c.JSON(http.StatusOK, apiresp.Fail(-1, "数据库查询失败"))
+			return
+		}
+		if amount > 100 {
+			c.JSON(http.StatusOK, apiresp.Fail(-1, "查询结果条数过多，请确认企业名称，缩小搜索范围！"))
+			return
+		}
 		objs, err := db.SearchObjectByName(name)
 		if err != nil {
 			c.JSON(http.StatusOK, apiresp.Fail(-1, "数据库查询失败"))
 			return
 		}
-		if len(objs) > 100 {
-			c.JSON(http.StatusOK, apiresp.Fail(-1, "查询结果条数过多，请确认企业名称，缩小搜索范围！"))
-			return
-		}
+		// if len(objs) > 100 {
+		// 	c.JSON(http.StatusOK, apiresp.Fail(-1, "查询结果条数过多，请确认企业名称，缩小搜索范围！"))
+		// 	return
+		// }
 		c.JSON(http.StatusOK, apiresp.Success(objs))
 	})
 
