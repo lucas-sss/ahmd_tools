@@ -51,7 +51,7 @@
         <div style="text-align: center;">
             <div style="margin-top: 50px;text-align: center">
                 <a id="boxStatusBtn" href="javascript:void(0)" class="easyui-linkbutton" onclick="searchBoxStatus()"
-                    style="width:110px; margin-left: 20px;background: #5267efa2">查询盒子状态</a>
+                    style="width:110px; margin-left: 20px;background: #5267efa2">查询盒子信息</a>
                 <a id="keyUpdateNoticeBtn" href="javascript:void(0)" class="easyui-linkbutton"
                     onclick="pushKeyUpdateNotice()"
                     style="width:140px; margin-left: 20px;background: #5267efa2">推送密钥更新通知</a>
@@ -197,20 +197,29 @@
                             $.messager.alert('错误', jsonData.errmsg, 'error');
                             return
                         } else {
-                            var state = eval(jsonData.data).state
+                            var state = eval(jsonData.data).state;
+                            var statusDesc = '';
                             if (state == 1) {
-                                $.messager.alert('提示', '密钥盒子运行状态: 正常', 'info');
+                                statusDesc = '正常';
                             } else if (state == 2) {
-                                $.messager.alert('提示', '密钥盒子运行状态: 异常', 'info');
+                                statusDesc = '异常';
                             } else if (state == 3) {
-                                $.messager.alert('提示', '密钥盒子运行状态: 断开', 'info');
+                                statusDesc = '断开';
                             } else if (state == 4) {
-                                $.messager.alert('提示', '密钥盒子运行状态: 未激活', 'info');
+                                statusDesc = '未激活';
                             } else if (state == 5) {
-                                $.messager.alert('提示', '密钥盒子运行状态: 未发现设备', 'info');
+                                statusDesc = '未发现设备';
                             } else {
-                                $.messager.alert('提示', '密钥盒子运行状态: 状态码识别错误', 'info');
+                                statusDesc = '状态码识别错误';
                             }
+                            $.messager.alert({
+                                width: 360,
+                                height: 180,
+                                title: '盒子信息:',
+                                msg: '&nbsp;&nbsp;&nbsp;运行状态: ' + statusDesc + '<br><br>设备序列号: ' + eval(jsonData.data).dn,
+                                icon: 'info'
+                            });
+                            //$.messager.alert('盒子信息', '&emsp;运行状态: ' + statusDesc + '<br>设备序列号: ' + eval(jsonData.data).dn, 'info');
                         }
                     }
                 });

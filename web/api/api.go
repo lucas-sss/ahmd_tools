@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/sessions"
@@ -178,7 +179,7 @@ func RegisterBusinessRoute(r *gin.Engine) {
 			c.JSON(http.StatusOK, apiresp.Fail(-1, "企业ID为空"))
 			return
 		}
-
+		//查询盒子状态
 		boxStatusResp, err := CheckBoxStatus(thridobjectid)
 		if err != nil || boxStatusResp.Status != 0 {
 			c.JSON(http.StatusOK, apiresp.Fail(-1, "服务异常"))
@@ -188,6 +189,16 @@ func RegisterBusinessRoute(r *gin.Engine) {
 			c.JSON(http.StatusOK, apiresp.Fail(-1, "查询盒子状态失败"))
 			return
 		}
-		c.JSON(http.StatusOK, apiresp.Success(map[string]int{"state": boxStatusResp.State}))
+		//查询盒子序列号
+		dn := ""
+		bindInfo, err := db.SearchBindInfo(thridobjectid)
+		if err == nil && bindInfo != nil {
+			keyId := bindInfo.KeyId
+			if keyId != "" {
+				arr := strings.Split(keyId, ":")
+				dn = arr[1]
+			}
+		}
+		c.JSON(http.StatusOK, apiresp.Success(map[string]interface{}{"state": boxStatusResp.State, "dn": dn}))
 	})
 }

@@ -13,7 +13,7 @@ var proxyServerDB *gorm.DB
 
 func Init(mysqlConf config.Mysql) {
 	ahmdDbInit(mysqlConf)
-	// proxyServerDbInit(mysqlConf)
+	proxyServerDbInit(mysqlConf)
 }
 
 func ahmdDbInit(mysqlConf config.Mysql) {
